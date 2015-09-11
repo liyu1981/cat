@@ -1,0 +1,8 @@
+.DS_Store
+*~
+*.log
+*.bak
+*.pyc
+*.swp
+*.xhpy.py
+*.xhpyc

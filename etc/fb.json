@@ -1,0 +1,14 @@
+{
+  "FACEBOOK_APP_ID": "1092670627425607",
+  "FACEBOOK_APP_SECRET": "cc5025eefafee1122d61bf727054592a",
+  "get_insights": [
+    {
+      "adobj_id": "6027337618866",
+      "adobj_type": "adcampaign"
+    },
+    {
+      "adobj_id": "act_10203623137487328",
+      "adobj_type": "adaccount"
+    }
+  ]
+}
