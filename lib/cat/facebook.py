@@ -3,7 +3,7 @@ import logging
 from facebookads import FacebookAdsApi
 from facebookads import FacebookSession
 
-import .conf
+import conf
 
 _ok = False
 

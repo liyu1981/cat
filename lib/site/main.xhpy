@@ -1,4 +1,5 @@
 import tornado.web
+from cat.xhpy.pylib import *
 
 class MainHandler(tornado.web.RequestHandler):
 
@@ -7,9 +8,9 @@ class MainHandler(tornado.web.RequestHandler):
         return r'/'
 
     def get(self):
-        self.write("""
+        self.write(str(
             <ul>
                 <li><a href="/fb">Refresh Access Token</a></li>
                 <li><a href="/getadsinsights">Get Ads Insights</a></li>
             </ul>
-        """)
+        ))

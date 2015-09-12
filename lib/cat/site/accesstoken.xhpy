@@ -3,11 +3,10 @@ import tornado.auth
 
 from urlparse import urljoin
 
-from .xhpy.pylib import *
-import conf
+from cat.xhpy.pylib import *
+from cat import conf
 
-class FacebookAccessTokenHandler(tornado.web.RequestHandler,
-                                 tornado.auth.FacebookGraphMixin):
+class FacebookAccessTokenHandler(tornado.web.RequestHandler, tornado.auth.FacebookGraphMixin):
 
     @staticmethod
     def get_path():
@@ -30,9 +29,9 @@ class FacebookAccessTokenHandler(tornado.web.RequestHandler,
                 code=self.get_argument("code"))
             # Save the user with e.g. set_secure_cookie
             conf.set('access_token', user["access_token"])
-            self.write(
+            self.write(str(
                 <p>Done with: {l["access_token"]}, saved in live_obj!</p>
-            )
+            ))
         else:
             yield self.authorize_redirect(
                 redirect_uri=urljoin(url, self.get_path()),

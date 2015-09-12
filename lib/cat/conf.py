@@ -1,6 +1,8 @@
 import json
 import logging
 
+logger = logging.getLogger(__name__)
+
 all = {
   'live': {}
 }
@@ -13,10 +15,10 @@ def get(name):
         try:
             with open(path, 'r') as f:
                 c = json.load(f)
-                logging.info('loaded conf {} => {}.'.format(path, name))
+                logger.info('loaded conf {} => {}.'.format(path, name))
                 return c
         except IOError,e:
-            logging.warn('Error {} while loading {}'.format(e, path))
+            logger.warn('Error {} while loading {}'.format(e, path))
             return {}
 
     if not name:
@@ -29,5 +31,5 @@ def get(name):
 
 def set(k, v):
     global all
-    logging.info('live changed: {} = {}'.format(k, v))
+    logger.info('live changed: {} = {}'.format(k, v))
     all['live'][k] = v
