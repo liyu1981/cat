@@ -14,7 +14,7 @@ class XHPyCompiler(object):
     __xhpy_ext = '.xhpy'
 
     @classmethod
-    def compile(cls):
+    def compile(cls, **kwargs):
         cwd = os.getcwd()
 
         filelist = []
@@ -22,8 +22,21 @@ class XHPyCompiler(object):
             for file in fnmatch.filter(files, '*'+cls.__xhpy_ext):
                 filelist.append(os.path.join(root, file))
 
+        compiled = []
         for filepath in filelist:
-            cls.compile_file(filepath)
+            (py_name, pyc_name) = cls.compile_file(filepath)
+            if py_name:
+                compiled.append((filepath, py_name, pyc_name))
+
+        if kwargs['add_gitignore']:
+            (rootdir, gitignorepath) = kwargs['add_gitignore']
+            try:
+                with open(gitignorepath, 'a+') as gi:
+                    cls.add_gitignore_entries(gi, compiled, rootdir)
+            except IOError,e:
+                logger.warn('Oops: {}'.format(e))
+
+        return compiled
 
     @classmethod
     def compile_file(cls, filepath):
@@ -33,7 +46,7 @@ class XHPyCompiler(object):
         if os.path.isfile(py_name) and \
            os.path.getmtime(py_name) >= os.path.getmtime(filepath):
             logger.debug('now compile {} ... skipped'.format(filepath))
-            return
+            return (None, None)
 
         with open(filepath, 'r') as xhpy_fp:
             xhpy_code = xhpy_fp.read()
@@ -45,6 +58,20 @@ class XHPyCompiler(object):
             marshal.dump(code, pyc_fp)
 
         logging.info('now compile {} ... done'.format(filepath))
+        return (py_name, pyc_name)
+
+    @classmethod
+    def add_gitignore_entries(cls, fp, compiled, rootdir):
+        fp.seek(0)
+        content = fp.read()
+        towrite = []
+        for _, py_name, _ in compiled:
+            entry = os.path.relpath(py_name, rootdir)
+            if content.find(entry) < 0:
+                towrite.append(entry)
+        for entry in towrite:
+            fp.write(entry + '\n')
+            logger.info('added {} to .gitignore'.format(entry))
 
 if __name__ == '__main__':
     XHPyCompiler.compile()

@@ -6,3 +6,7 @@
 *.swp
 *.xhpy.py
 *.xhpyc
+lib/cat/site/accesstoken.py
+lib/cat/xhpy/pylib/core.py
+lib/cat/xhpy/pylib/html.py
+lib/site/main.py

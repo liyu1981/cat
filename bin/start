@@ -32,5 +32,14 @@ logging.basicConfig(
 from cat.xhpy.xhpycompiler import XHPyCompiler
 from cat.server import WebServer
 
-XHPyCompiler.compile()
+XHPyCompiler.compile(
+    add_gitignore=(
+        os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..")
+        ),
+        os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", ".gitignore")
+        )
+    )
+)
 WebServer.start()
