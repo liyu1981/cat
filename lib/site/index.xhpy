@@ -1,0 +1,15 @@
+import tornado.web
+from cat.xhpy.pylib import *
+from cat.bootstrap import BootstrapWebPage
+
+class IndexHandler(BootstrapWebPage, tornado.web.RequestHandler):
+
+    @classmethod
+    def get_path(cls):
+        return r'/'
+
+    def get_layout(self):
+        return <ul>
+          <li><a href="/fb">Refresh Access Token</a></li>
+          <li><a href="/getadsinsights">Get Ads Insights</a></li>
+        </ul>

@@ -27,7 +27,10 @@ class :xhpy:html-element(:x:primitive):
     # misc
     string selected, string otherButtonLabel, string otherButtonHref,
     string otherButtonClass, string type, string replaceCaret,
-    string replaceChildren
+    string replaceChildren, string role,
+
+    # data
+    string data-toggle, string data-target
 
   def requireUniqueId(self):
     id = self.getAttribute('id')

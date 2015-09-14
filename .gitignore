@@ -9,4 +9,5 @@
 lib/cat/site/accesstoken.py
 lib/cat/xhpy/pylib/core.py
 lib/cat/xhpy/pylib/html.py
-lib/site/main.py
+lib/cat/bootstrap.py
+lib/site/index.py

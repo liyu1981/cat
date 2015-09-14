@@ -1,0 +1,68 @@
+import tornado.web
+from cat.xhpy.pylib import *
+
+class BootstrapWebPage(object):
+
+    def get(self):
+        meta = self.get_meta()
+        author = meta["author"] if "author" in meta \
+                                else "unknown"
+        description = meta["description"] if "description" in meta \
+                                          else "placeholder"
+
+        page = str(
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
+              <meta name="author" content={author} />
+              <meta name="description" content={description} />
+              <title>{self.get_title()}</title>
+              <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+              <link href="sticky-footer-navbar.css" rel="stylesheet" />
+            </head>
+            <body>
+              <div class="navbar navbar-default navbar-fixed-top">
+                {self.get_nav()}
+              </div>
+              <div class="container">
+                <div style="margin-top: 80px;"></div>
+                {self.get_layout()}
+              </div>
+              <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+              <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+            </body>
+          </html>
+        )
+
+        self.write("<!DOCTYPE html>\n" + page)
+
+    def get_meta(self):
+        return {}
+
+    def get_title(self):
+        return 'Navbar Template for Bootstrap'
+
+    def get_nav(self):
+        return <div class="container">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">Project name</a>
+          </div>
+          <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">More <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Contact</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="#">About</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+    def get_layout(self):
+        return <p>Placeholder</p>
