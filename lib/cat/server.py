@@ -58,8 +58,6 @@ class WebServer(object):
         d = os.path.dirname(os.path.realpath(__file__))
         cat_site_dir = os.path.abspath(os.path.join(d, '..', 'cat', 'site'))
         site_dir = os.path.abspath(os.path.join(d, '..', 'site'))
-        print cat_site_dir
-        print site_dir
 
         # internal first
         for clsobj in cls.load_classes_from_path(cat_site_dir):

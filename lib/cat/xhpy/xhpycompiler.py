@@ -32,7 +32,7 @@ class XHPyCompiler(object):
 
         if os.path.isfile(py_name) and \
            os.path.getmtime(py_name) >= os.path.getmtime(filepath):
-            logger.info('now compile {} ... skipped'.format(filepath))
+            logger.debug('now compile {} ... skipped'.format(filepath))
             return
 
         with open(filepath, 'r') as xhpy_fp:
