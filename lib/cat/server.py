@@ -80,6 +80,33 @@ class WebServer(object):
                 routes_dict[path] = clsobj
                 logger.info('path {} register with {}.'.format(path, clsobj))
 
+        # finally append static handler
+        static_path = r'/static'
+        static_clsobj = tornado.web.StaticFileHandler
+        static_params = {
+            'path': os.path.abspath(os.path.join(d, '..', 'html'))
+        }
+        if (static_path in routes_dict):
+            logging.warn('path {} is used by {}, will be overrided.'.format(
+                path,
+                routes_dict[path]
+            ))
+
+            routes_dict[static_path] = static_clsobj
+
+            index = 0
+            for i in range(0, len(routes)):
+                if routes[i][0] == static_path:
+                    index = i
+                    break
+            del routes[index]
+
+        routes.append((static_path, static_clsobj, static_params))
+        logger.info('path {} register with {}, params {}.'.format(
+            static_path, static_clsobj, static_params
+        ))
+
+        # everything ready!
         application = tornado.web.Application(
             routes,
             debug=(True if ('debug' in s and s['debug']) else False)
