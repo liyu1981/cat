@@ -611,51 +611,72 @@ def nud(self, recursive=False):
   # dropping them along with the preceding '<' token.
   if not recursive:
     yield XHPY_SENTINEL, None
-  ignore_whitespace.append(True)
-  tag_type, tag_open_name = xhpy_tag_name().next()
-  yield tag_type, tag_open_name
-  yield tokenize.OP, '('
-  for t in xhpy_tag_attrs():
-    yield t
-  if token.id == '/':
-    # singleton tag found, close and exit
+  if token.id == '!':
+    # comment is started with !
+    comment_content = xhpy_html_comment().next()
+    yield tokenize.NAME, 'xhpy_x__comment'
+    yield tokenize.OP, '('
+    yield tokenize.OP, '"'
+    yield tokenize.STRING, comment_content
+    yield tokenize.OP, '"'
     yield tokenize.OP, ')'
-    ignore_whitespace.pop()
-    advance('/')
     advance('>')
-    return
-  yield tokenize.OP, ','
-  yield tokenize.OP, '['
-  advance('>')
-  while True:
-    if token.id == '<':
-      advance('<')
-      if token.id == '/':
-        # close tag found, attempt to match
-        advance('/')
-        tag_type, tag_close_name = xhpy_tag_name().next()
-        if tag_open_name != tag_close_name:
-          raise XHPySyntaxError("Expected closing tag </%s>, got </%s>" % (tag_open_name, tag_close_name))
-        ignore_whitespace.pop()
-        advance('>')
-        break
-      else:
-        # nested open tag found
-        for t in symbol('<')().nud(recursive=True):
+  else:
+    ignore_whitespace.append(True)
+    tag_type, tag_open_name = xhpy_tag_name().next()
+    yield tag_type, tag_open_name
+    yield tokenize.OP, '('
+    for t in xhpy_tag_attrs():
+      yield t
+    if token.id == '/':
+      # singleton tag found, close and exit
+      yield tokenize.OP, ')'
+      ignore_whitespace.pop()
+      advance('/')
+      advance('>')
+      return
+    yield tokenize.OP, ','
+    yield tokenize.OP, '['
+    advance('>')
+    while True:
+      if token.id == '<':
+        advance('<')
+        if token.id == '/':
+          # close tag found, attempt to match
+          advance('/')
+          tag_type, tag_close_name = xhpy_tag_name().next()
+          if tag_open_name != tag_close_name:
+            raise XHPySyntaxError("Expected closing tag </%s>, got </%s>" % (tag_open_name, tag_close_name))
+          ignore_whitespace.pop()
+          advance('>')
+          break
+        else:
+          # nested open tag found
+          for t in symbol('<')().nud(recursive=True):
+            yield t
+          yield tokenize.OP, ','
+      elif token.id == '{':
+        # pcdata expression found
+        for t in xhpy_expression():
           yield t
         yield tokenize.OP, ','
-    elif token.id == '{':
-      # pcdata expression found
-      for t in xhpy_expression():
-        yield t
-      yield tokenize.OP, ','
-    else:
-      # pcdata text found
-      for t in xhpy_text():
-        yield t
-      yield tokenize.OP, ','
-  yield tokenize.OP, ']'
-  yield tokenize.OP, ')'
+      else:
+        # pcdata text found
+        for t in xhpy_text():
+          yield t
+        yield tokenize.OP, ','
+    yield tokenize.OP, ']'
+    yield tokenize.OP, ')'
+
+def xhpy_html_comment():
+  global token
+  content_values = []
+  while True:
+    if token.id == '>':
+      break
+    content_values.append(token.value)
+    token = next()
+  yield ' '.join(content_values).lstrip('! - -').rstrip('- -')
 
 def xhpy_tag_name():
   # drop
@@ -1450,7 +1471,6 @@ def rewrite(program, debug=False):
     next_debug_helper = tokenize_collapse_multiple_strings(program).next
     def next_debug():
       token = next_debug_helper()
-      print token.id, token.value, token.start, token.end
       return token
     next = next_debug
   else:

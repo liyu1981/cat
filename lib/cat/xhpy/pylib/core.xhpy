@@ -52,6 +52,10 @@ class XHPyStrictValidator(object):
       raise XHPyInvalidAttributeException(element, enums, attr, val)
 
   def validateChildren(self, element):
+    # skip :x:comment
+    if isinstance(element, :x:comment):
+      return
+
     decl = element._xhpyChildrenDeclaration()
     if decl == CHILD_DECL_ANY:
       # any children allowed
@@ -68,6 +72,12 @@ class XHPyStrictValidator(object):
 
   def validateChildrenExpression(self, element, decl):
     n = len(element._children)
+
+    # skip :x:comment
+    if self.ii < n and isinstance(element._children[self.ii], :x:comment):
+      self.ii += 1
+      return self.validateChildrenExpression(element, decl)
+
     if decl[0] == CHILD_ATOM_ANY:
       # any element -- any
       if self.ii < n:
@@ -302,6 +312,10 @@ class :x:composable-element(:x:base):
     return self
 
   def _flushElementChildren(self):
+    # skip x:comment
+    if isinstance(self, :x:comment):
+      return
+
     ln = len(self._children)
     for ii in xrange(ln):
       child = self._children[ii]
@@ -377,3 +391,13 @@ class :x:frag(:x:primitive):
     for child in self.getChildren():
       buf += :x:base.renderChild(child)
     return buf
+
+class :x:comment(:x:primitive):
+  """
+  Render an html comment
+  """
+  def __init__(self, content):
+    self.content = content
+
+  def stringify(self):
+    return '<!-- {} -->'.format(self.content)
