@@ -638,33 +638,41 @@ def nud(self, recursive=False):
     yield tokenize.OP, ','
     yield tokenize.OP, '['
     advance('>')
-    while True:
-      if token.id == '<':
-        advance('<')
-        if token.id == '/':
-          # close tag found, attempt to match
-          advance('/')
-          tag_type, tag_close_name = xhpy_tag_name().next()
-          if tag_open_name != tag_close_name:
-            raise XHPySyntaxError("Expected closing tag </%s>, got </%s>" % (tag_open_name, tag_close_name))
-          ignore_whitespace.pop()
-          advance('>')
-          break
-        else:
-          # nested open tag found
-          for t in symbol('<')().nud(recursive=True):
+    if tag_open_name in ('xhpy_style', 'xhpy_script'):
+      # style and script tag is special as they accept any pcdata until '</' is
+      # found
+      style_script_content = xhpy_style_script_content(tag_open_name).next()
+      yield tokenize.OP, '"'
+      yield tokenize.STRING, style_script_content
+      yield tokenize.OP, '"'
+    else:
+      while True:
+        if token.id == '<':
+          advance('<')
+          if token.id == '/':
+            # close tag found, attempt to match
+            advance('/')
+            tag_type, tag_close_name = xhpy_tag_name().next()
+            if tag_open_name != tag_close_name:
+              raise XHPySyntaxError("Expected closing tag </%s>, got </%s>" % (tag_open_name, tag_close_name))
+            ignore_whitespace.pop()
+            advance('>')
+            break
+          else:
+            # nested open tag found
+            for t in symbol('<')().nud(recursive=True):
+              yield t
+            yield tokenize.OP, ','
+        elif token.id == '{':
+          # pcdata expression found
+          for t in xhpy_expression():
             yield t
           yield tokenize.OP, ','
-      elif token.id == '{':
-        # pcdata expression found
-        for t in xhpy_expression():
-          yield t
-        yield tokenize.OP, ','
-      else:
-        # pcdata text found
-        for t in xhpy_text():
-          yield t
-        yield tokenize.OP, ','
+        else:
+          # pcdata text found
+          for t in xhpy_text():
+            yield t
+          yield tokenize.OP, ','
     yield tokenize.OP, ']'
     yield tokenize.OP, ')'
 
@@ -677,6 +685,30 @@ def xhpy_html_comment():
     content_values.append(token.value)
     token = next()
   yield ' '.join(content_values).lstrip('! - -').rstrip('- -')
+
+def xhpy_style_script_content(tag_open_name):
+  global token
+  style_script_content = []
+  while True:
+    if token.id == '<':
+      advance('<')
+      if token.id == '/':
+        # close tag found, attempt to match
+        advance('/')
+        tag_type, tag_close_name = xhpy_tag_name().next()
+        if tag_open_name != tag_close_name:
+          raise XHPySyntaxError("Expected closing tag </%s>, got </%s>" % (tag_open_name, tag_close_name))
+        ignore_whitespace.pop()
+        advance('>')
+        break
+      else:
+        # normal content
+        style_script_content.append('<')
+        style_script_content.append(token.value)
+    else:
+      style_script_content.append(token.value)
+    token = next()
+  yield ''.join(style_script_content)
 
 def xhpy_tag_name():
   # drop

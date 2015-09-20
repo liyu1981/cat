@@ -559,7 +559,7 @@ class :meta(:xhpy:html-singleton):
     enum {
       "content-type", "content-style-type", "expires", "refresh", "set-cookie"
     } http-equiv,
-    string http-equiv, string name, string scheme,
+    string http-equiv, string name, string scheme, string value,
     string charset
   category %metadata
   def __init__(self, attributes={}, children=[]):
