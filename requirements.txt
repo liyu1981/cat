@@ -1,8 +1,13 @@
+argh==0.26.1
 backports.ssl-match-hostname==3.4.0.2
 certifi==2015.9.6.2
 configparser==3.5.0b2
 facebookads==2.4.2
 future==0.15.0
+futures==3.0.3
+pathtools==0.1.2
+PyYAML==3.11
 requests==2.7.0
 six==1.9.0
 tornado==4.2.1
+watchdog==0.8.3

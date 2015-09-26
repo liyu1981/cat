@@ -23,3 +23,12 @@ def get_probably_unique_id():
   import hashlib
   import random
   return hashlib.md5(str(random.randrange(2**31-1))).hexdigest()[:10]
+
+__is_debug = None
+
+def set_parser_debug():
+  global __is_debug
+  __is_debug = True
+
+def is_debug():
+  return __is_debug

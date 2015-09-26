@@ -11,3 +11,11 @@ lib/cat/xhpy/pylib/core.py
 lib/cat/xhpy/pylib/html.py
 lib/cat/bootstrap.py
 lib/site/index.py
+lib/cat/bootstrap/webpage.py
+lib/cat/bootstrap/ui.py
+lib/cat/site/bootstrapcomponents.py
+lib/cat/site/bootstrapcomponents/bootstrapcomponents.py
+lib/cat/site/bootstrapcomponents/navbar.py
+lib/cat/site/bootstrapcomponents/index.py
+lib/cat/site/bootstrap/components.py
+lib/cat/site/bootstrap/components/navbar.py

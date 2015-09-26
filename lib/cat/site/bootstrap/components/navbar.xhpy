@@ -1,0 +1,151 @@
+from cat.xhpy.pylib import *
+from cat.bootstrap.ui import *
+
+EXAMPLE_CATEGORY = 'Navbar'
+
+def example1():
+    common_dropdown = <bootstrap:navbar:dropdown toggle-text='Dropdown'>
+      <bootstrap:navbar:item>
+        <a href="#">Action</a>
+      </bootstrap:navbar:item>
+      <bootstrap:navbar:item>
+        <a href="#">Another Action</a>
+      </bootstrap:navbar:item>
+      <bootstrap:navbar:item>
+        <a href="#">Something else here</a>
+      </bootstrap:navbar:item>
+      <bootstrap:navbar:separator />
+      <bootstrap:navbar:item>
+        <a href="#">Separated link</a>
+      </bootstrap:navbar:item>
+      <bootstrap:navbar:separator />
+      <bootstrap:navbar:item>
+        <a href="#">One more separated link</a>
+      </bootstrap:navbar:item>
+    </bootstrap:navbar:dropdown>
+
+    return (
+        'Default Navbar',
+        <bootstrap:navbar with-container='fluid'>
+          <bootstrap:navbar:header>
+            <a class="navbar-brand" href="#">Brand</a>
+          </bootstrap:navbar:header>
+          <bootstrap:navbar:body>
+            <bootstrap:navbar:nav>
+              <bootstrap:navbar:item active={True}>
+                <a href="#">Link</a>
+              </bootstrap:navbar:item>
+              <bootstrap:navbar:item>
+                <a href="#">Link</a>
+              </bootstrap:navbar:item>
+              {common_dropdown}
+            </bootstrap:navbar:nav>
+            <bootstrap:navbar:form>
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+                </input>
+              </div>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </bootstrap:navbar:form>
+            <bootstrap:navbar:nav align-right={True}>
+              <bootstrap:navbar:item>
+                <a href="#">Link</a>
+              </bootstrap:navbar:item>
+              {common_dropdown}
+            </bootstrap:navbar:nav>
+          </bootstrap:navbar:body>
+        </bootstrap:navbar>
+    )
+
+def example2():
+    return (
+        'Brand Image',
+        <bootstrap:navbar with-container='fluid'>
+          <bootstrap:navbar:header>
+            <a class="navbar-brand" href="#">
+              <img alt="Brand" width="20" height="20"
+                   src="http://getbootstrap.com/favicon.ico" />
+            </a>
+          </bootstrap:navbar:header>
+        </bootstrap:navbar>
+    )
+
+def example3():
+    return (
+        'Forms',
+        <bootstrap:navbar with-container='fluid'>
+          <bootstrap:navbar:header>
+            <a class="navbar-brand" href="#">Brand</a>
+          </bootstrap:navbar:header>
+          <bootstrap:navbar:body>
+            <bootstrap:navbar:form>
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search" />
+              </div>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </bootstrap:navbar:form>
+          </bootstrap:navbar:body>
+        </bootstrap:navbar>
+    )
+
+def example4():
+    return (
+        'Buttons',
+        <bootstrap:navbar with-container='fluid'>
+          <bootstrap:navbar:header>
+            <a class="navbar-brand" href="#">Brand</a>
+          </bootstrap:navbar:header>
+          <bootstrap:navbar:body>
+            <bootstrap:navbar:button>Sign In</bootstrap:navbar:button>
+          </bootstrap:navbar:body>
+        </bootstrap:navbar>
+    )
+
+def example5():
+    return (
+        'Text',
+        <bootstrap:navbar with-container='fluid'>
+          <bootstrap:navbar:header>
+            <a class="navbar-brand" href="#">Brand</a>
+          </bootstrap:navbar:header>
+          <bootstrap:navbar:body>
+            <p class="navbar-text">Signed in as Mark Otto</p>
+          </bootstrap:navbar:body>
+        </bootstrap:navbar>
+    )
+
+def example6():
+    return (
+        'No-nav Links',
+        <bootstrap:navbar with-container='fluid'>
+          <bootstrap:navbar:header>
+            <a class="navbar-brand" href="#">Brand</a>
+          </bootstrap:navbar:header>
+          <bootstrap:navbar:body>
+            <p class="navbar-text navbar-right">
+              Signed in as
+              <a href="#" class="navbar-link">Mark Otto</a>
+            </p>
+          </bootstrap:navbar:body>
+        </bootstrap:navbar>
+    )
+
+def example7():
+    return (
+        'Inverted Navbar',
+        <bootstrap:navbar with-container='fluid' navbar-inverse={True}>
+          <bootstrap:navbar:header>
+            <a class="navbar-brand" href="#">Brand</a>
+          </bootstrap:navbar:header>
+          <bootstrap:navbar:body>
+            <bootstrap:navbar:nav>
+              <bootstrap:navbar:item active={True}>
+                <a href="#">Link</a>
+              </bootstrap:navbar:item>
+              <bootstrap:navbar:item>
+                <a href="#">Link</a>
+              </bootstrap:navbar:item>
+            </bootstrap:navbar:nav>
+          </bootstrap:navbar:body>
+        </bootstrap:navbar>
+    )

@@ -1,0 +1,61 @@
+# -*- coding: utf-8 -*-
+import os
+import os.path
+import tornado.web
+from cat.xhpy.pylib import *
+from cat.bootstrap.ui import *
+from cat.bootstrap import BootstrapWebPage
+
+class IndexHandler(BootstrapWebPage, tornado.web.RequestHandler):
+
+    @classmethod
+    def get_path(cls):
+        return r'/cat/bootstrap/components'
+
+    def get_title(self):
+        return 'Components - Bootstrap'
+
+    def get_nav(self):
+        return [
+          <bootstrap:navbar:header>
+            <a class="navbar-brand" href="#">Bootstrap</a>
+          </bootstrap:navbar:header>,
+          <bootstrap:navbar:body collapse={True}>
+            <bootstrap:navbar:nav>
+              <bootstrap:navbar:item active={True}>
+                <a href="#">Components</a>
+              </bootstrap:navbar:item>
+            </bootstrap:navbar:nav>
+          </bootstrap:navbar:body>
+        ]
+
+    def get_layout(self):
+        thisdir = os.path.abspath(os.path.dirname(__file__))
+        componentsdir = os.path.abspath(os.path.join(thisdir, 'components'))
+        example_name_fmt = 'example{}'
+
+        xhpys = []
+
+        import importlib
+        for root, directories, files in os.walk(componentsdir):
+            for filepath in files:
+                filename, fileext = os.path.splitext(filepath)
+                if fileext == '.py' and not filename == '__init__':
+                    mod = importlib.import_module(
+                        '.' + filename,
+                        package='cat.site.bootstrap.components'
+                    )
+                    if not 'EXAMPLE_CATEGORY' in mod.__dict__:
+                        continue
+                    xhpys.append(<h2>{mod.EXAMPLE_CATEGORY}</h2>)
+                    i = 1
+                    while True:
+                        example_name = example_name_fmt.format(i)
+                        if not example_name in mod.__dict__:
+                            break
+                        title, xhpy = mod.__dict__[example_name]()
+                        xhpys.append(<h3>{title}</h3>)
+                        xhpys.append(xhpy)
+                        i = i + 1
+
+        return xhpys

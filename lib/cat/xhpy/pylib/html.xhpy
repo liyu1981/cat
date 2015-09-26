@@ -30,7 +30,7 @@ class :xhpy:html-element(:x:primitive):
     string replaceChildren, string role,
 
     # data
-    string data-toggle, string data-target
+    string data-toggle, string data-target, string data-orig-attrs
 
   def requireUniqueId(self):
     id = self.getAttribute('id')
@@ -96,6 +96,8 @@ class :xhpy:pseudo-singleton(:xhpy:html-element):
     return buf + '</' + self.tagName + '>'
 
 # XHP element definitions
+# find category definitions here:
+# http://w3c.github.io/html-reference/common-models.html#common.elem.flow
 
 class :a(:xhpy:html-element):
   attribute
@@ -135,7 +137,9 @@ class :address(:xhpy:html-element):
 
 
 class :area(:xhpy:html-singleton):
-  attribute string alt, string coords, string href, bool nohref, string shape, string target
+  attribute
+    string alt, string coords, string href, bool nohref, string shape,
+    string target
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)
     self.tagName = 'area'
@@ -191,7 +195,9 @@ class :br(:xhpy:html-singleton):
 
 class :button(:xhpy:html-element):
   attribute
-    bool disabled, string name, enum { "submit", "button", "reset" } type, string value
+    bool disabled, string name,
+    enum { "submit", "button", "reset" } type,
+    string value
   category %flow, %phrase, %interactive
   # may not contain interactive
   children (pcdata | %phrase)*
@@ -226,9 +232,10 @@ class :code(:xhpy:html-element):
 
 class :col(:xhpy:html-singleton):
   attribute
-    enum { "left", "right", "center", "justify", "char" } align, string char,
-    int charoff, int span,
-    enum { "top", "middle", "bottom", "baseline" } valign, string width
+    enum { "left", "right", "center", "justify", "char" } align,
+    string char, int charoff, int span,
+    enum { "top", "middle", "bottom", "baseline" } valign,
+    string width
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)
     self.tagName = 'col'
@@ -236,9 +243,10 @@ class :col(:xhpy:html-singleton):
 
 class :colgroup(:xhpy:html-element):
   attribute
-    enum { "left", "right", "center", "justify", "char" } align, string char,
-    int charoff, int span,
-    enum { "top", "middle", "bottom", "baseline" } valign, string width
+    enum { "left", "right", "center", "justify", "char" } align,
+    string char, int charoff, int span,
+    enum { "top", "middle", "bottom", "baseline" } valign,
+    string width
   children (:col)*
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)
@@ -267,7 +275,6 @@ class :div(:xhpy:html-element):
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)
     self.tagName = 'div'
-
 
 class :dfn(:xhpy:html-element):
   category %flow, %phrase
@@ -311,7 +318,8 @@ class :fieldset(:xhpy:html-element):
 class :form(:xhpy:html-element):
   attribute
     string action, string accept, string accept-charset, string enctype,
-    enum { "get", "post" } method, string name, string target, bool ajaxify
+    enum { "get", "post" } method,
+    string name, string target, bool ajaxify
   category %flow
   # may not contain form
   children (pcdata | %flow)*
@@ -323,7 +331,8 @@ class :form(:xhpy:html-element):
 class :frame(:xhpy:html-singleton):
   attribute
     bool frameborder, string longdesc, int marginheight, int marginwidth,
-    string name, bool noresize, enum { "yes", "no", "auto" } scrolling,
+    string name, bool noresize,
+    enum { "yes", "no", "auto" } scrolling,
     string src
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)
@@ -427,7 +436,8 @@ class :iframe(:xhpy:pseudo-singleton):
   attribute
     enum {"1", "0"} frameborder,
     string height, string longdesc, int marginheight,
-    int marginwidth, string name, enum { "yes", "no", "auto" } scrolling,
+    int marginwidth, string name,
+    enum { "yes", "no", "auto" } scrolling,
     string src, string width
   category %flow, %phrase, %interactive
   children empty
@@ -455,7 +465,8 @@ class :input(:xhpy:html-singleton):
     enum { "on", "off" } autocomplete,
     string placeholder,
     # HTML
-    string accept, enum { "left", "right", "top", "middle", "bottom" } align,
+    string accept,
+    enum { "left", "right", "top", "middle", "bottom" } align,
     string alt, bool checked, bool disabled, int maxlength, string name,
     bool readonly, int size, string src,
     enum {
@@ -584,7 +595,8 @@ class :noscript(:xhpy:html-element):
 
 class :object(:xhpy:html-element):
   attribute
-    enum { "left", "right", "top", "bottom" } align, string archive, int border,
+    enum { "left", "right", "top", "bottom" } align,
+    string archive, int border,
     string classid, string codebase, string codetype, string data, bool declare,
     int height, int hspace, string name, string standby, string type,
     string usemap, int vspace, int width
@@ -716,7 +728,8 @@ class :style(:xhpy:pseudo-singleton):
     enum {
       "screen", "tty", "tv", "projection", "handheld", "print", "braille",
       "aural", "all"
-    } media, string type
+    } media,
+    string type
   category %metadata
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)
@@ -764,8 +777,9 @@ class :table(:xhpy:html-element):
 
 class :tbody(:xhpy:html-element):
   attribute
-    enum { "right", "left", "center", "justify", "char" } align, string char,
-    int charoff, enum { "top", "middle", "bottom", "baseline" } valign
+    enum { "right", "left", "center", "justify", "char" } align,
+    string char, int charoff,
+    enum { "top", "middle", "bottom", "baseline" } valign
   children (:tr)*
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)
@@ -775,9 +789,11 @@ class :tbody(:xhpy:html-element):
 
 class :td(:xhpy:html-element):
   attribute
-    string abbr, enum { "left", "right", "center", "justify", "char" } align,
+    string abbr,
+    enum { "left", "right", "center", "justify", "char" } align,
     string axis, string char, int charoff, int colspan, string headers,
-    int rowspan, enum { "col", "colgroup", "row", "rowgroup" } scope,
+    int rowspan,
+    enum { "col", "colgroup", "row", "rowgroup" } scope,
     enum { "top", "middle", "bottom", "baseline" } valign
   children (pcdata | %flow)*
   def __init__(self, attributes={}, children=[]):
@@ -797,8 +813,10 @@ class :textarea(:xhpy:pseudo-singleton):
 
 class :tfoot(:xhpy:html-element):
   attribute
-    enum { "left", "right", "center", "justify", "char" } align, string char,
-    int charoff, enum { "top", "middle", "bottom", "baseline" } valign
+    enum { "left", "right", "center", "justify", "char" } align,
+    string char,
+    int charoff,
+    enum { "top", "middle", "bottom", "baseline" } valign
   children (:tr)*
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)
@@ -807,7 +825,8 @@ class :tfoot(:xhpy:html-element):
 
 class :th(:xhpy:html-element):
   attribute
-    string abbr, enum { "left", "right", "center", "justify", "char" } align,
+    string abbr,
+    enum { "left", "right", "center", "justify", "char" } align,
     string axis, string char, int charoff, int colspan, int rowspan,
     enum { "col", "colgroup", "row", "rowgroup" } scope,
     enum { "top", "middle", "bottom", "baseline" } valign
@@ -819,8 +838,10 @@ class :th(:xhpy:html-element):
 
 class :thead(:xhpy:html-element):
   attribute
-    enum { "left", "right", "center", "justify", "char" } align, string char,
-    int charoff, enum { "top", "middle", "bottom", "baseline" } valign
+    enum { "left", "right", "center", "justify", "char" } align,
+    string char,
+    int charoff,
+    enum { "top", "middle", "bottom", "baseline" } valign
   children (:tr)*
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)
@@ -837,8 +858,10 @@ class :title(:xhpy:pseudo-singleton):
 
 class :tr(:xhpy:html-element):
   attribute
-    enum { "left", "right", "center", "justify", "char" } align, string char,
-    int charoff, enum { "top", "middle", "bottom", "baseline" } valign
+    enum { "left", "right", "center", "justify", "char" } align,
+    string char,
+    int charoff,
+    enum { "top", "middle", "bottom", "baseline" } valign
   children (:th | :td)*
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)

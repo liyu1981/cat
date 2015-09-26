@@ -14,8 +14,11 @@ class XHPyCompiler(object):
     __xhpy_ext = '.xhpy'
 
     @classmethod
-    def compile(cls, **kwargs):
-        cwd = os.getcwd()
+    def compile_dir(cls, **kwargs):
+        if 'dir' in kwargs:
+            cwd = kwargs['dir']
+        else:
+            cwd = os.getcwd()
 
         filelist = []
         for root, dirs, files in os.walk(cwd):
@@ -28,7 +31,7 @@ class XHPyCompiler(object):
             if py_name:
                 compiled.append((filepath, py_name, pyc_name))
 
-        if kwargs['add_gitignore']:
+        if 'add_gitignore' in kwargs:
             (rootdir, gitignorepath) = kwargs['add_gitignore']
             try:
                 with open(gitignorepath, 'a+') as gi:
@@ -39,7 +42,7 @@ class XHPyCompiler(object):
         return compiled
 
     @classmethod
-    def compile_file(cls, filepath):
+    def compile_file(cls, filepath, **kwargs):
         py_name = filepath.replace(cls.__xhpy_ext, '.py')
         pyc_name = filepath.replace(cls.__xhpy_ext, '.pyc')
 
@@ -72,6 +75,12 @@ class XHPyCompiler(object):
         for entry in towrite:
             fp.write(entry + '\n')
             logger.info('added {} to .gitignore'.format(entry))
+
+    @classmethod
+    def debug(cls):
+        from .parser.utils import set_parser_debug
+        set_parser_debug()
+        logger.info('debug mode turned on.')
 
 if __name__ == '__main__':
     XHPyCompiler.compile()

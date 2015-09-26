@@ -1,0 +1,92 @@
+import tornado.web
+from cat.xhpy.pylib import *
+from .ui import *
+
+class BootstrapWebPage(object):
+
+    def get(self):
+        page = str(
+          <html lang="en">
+            <head>
+              {self.__get_meta()}
+              <title>{self.get_title()}</title>
+              {self.__get_bootstrap()}
+            </head>
+            <body>
+              <!-- Fixed navbar -->
+              <bootstrap:navbar navbar-type='fixed-top'>
+                {self.get_nav()}
+              </bootstrap:navbar>
+              <div class="container">
+                {self.get_layout()}
+              </div>
+              <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+              <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+            </body>
+          </html>
+        )
+
+        self.write("<!DOCTYPE html>\n" + page)
+
+    def get_meta(self):
+        return {}
+
+    def __get_meta(self):
+        meta = self.get_meta()
+        author = meta["author"] if "author" in meta \
+                                else "unknown"
+        description = meta["description"] if "description" in meta \
+                                          else "placeholder"
+        return [
+          <meta charset="utf-8" />,
+          <meta http-equiv="X-UA-Compatible" content="IE=edge" />,
+          <meta name="viewport" content="width=device-width, initial-scale=1" />,
+          <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->,
+          <meta name="author" content={author} />,
+          <meta name="description" content={description} />
+        ]
+
+    def __get_bootstrap(self):
+        return [
+          <!-- Bootstrap core CSS -->,
+          <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />,
+          <!-- Custom styles navbar-fixed-top -->,
+          <style>body { padding-top: 70px; }</style>,
+          <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->,
+          <!--[if lt IE 9]-->,
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>,
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>,
+          <!--[endif]-->
+        ]
+
+    def get_title(self):
+        return 'Navbar Template for Bootstrap'
+
+    def get_nav(self):
+        return [
+          <bootstrap:navbar:header>
+            <a class="navbar-brand" href="#">Project name</a>
+          </bootstrap:navbar:header>,
+          <bootstrap:navbar:body collapse={True}>
+            <bootstrap:navbar:nav>
+              <bootstrap:navbar:item active={True}>
+                <a href="#">Home</a>
+              </bootstrap:navbar:item>
+              <bootstrap:navbar:dropdown>
+                  <bootstrap:navbar:item>
+                    <a href="#">Contact</a>
+                  </bootstrap:navbar:item>
+                  <bootstrap:navbar:separator />
+                  <bootstrap:navbar:item>
+                    <a href="#">About</a>
+                  </bootstrap:navbar:item>
+              </bootstrap:navbar:dropdown>
+            </bootstrap:navbar:nav>
+          </bootstrap:navbar:body>
+        ]
+
+    def get_layout(self):
+      return <bootstrap:jumbotron>
+        <h1>Bootstrap example</h1>
+        <p>This is an example page.</p>
+      </bootstrap:jumbotron>

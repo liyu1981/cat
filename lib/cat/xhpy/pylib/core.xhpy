@@ -1,7 +1,8 @@
 from ..parser.constants import *
-from ..parser.utils import htmlspecialchars, tag2class
+from ..parser.utils import htmlspecialchars, tag2class, is_debug
 
 from .exception import *
+import types
 
 ENABLE_VALIDATION = True
 
@@ -21,7 +22,7 @@ class XHPyStrictValidator(object):
       return None
 
     that = element
-    decl = that._xhpyAttributeDeclaration()
+    decl = that._getXhpyAttributeDeclaration()
     while attr not in decl:
       if not isinstance(that, :x:base):
         raise XHPyAttributeNotSupportedException(element, attr)
@@ -218,10 +219,16 @@ class :x:base(object):
   def appendChild(self, child):
     raise NotImplementedError('not implemented!')
 
+  def prependChild(self, child):
+    raise NotImplementedError('not implemented!')
+
   def getAttribute(self, attr):
     raise NotImplementedError('not implemented!')
 
   def setAttribute(self, attr, val):
+    raise NotImplementedError('not implemented!')
+
+  def delAttribute(self, attr):
     raise NotImplementedError('not implemented!')
 
   def categoryOf(self, cat):
@@ -236,9 +243,6 @@ class :x:base(object):
     return htmlspecialchars(unicode(child))
 
 class :x:composable-element(:x:base):
-  def _init(self):
-    pass
-
   def __init__(self, attributes={}, children=[], source=None):
     self.source = source
     if attributes and ENABLE_VALIDATION:
@@ -249,6 +253,7 @@ class :x:composable-element(:x:base):
     self._children = []
     for child in children:
       self.appendChild(child)
+    self._decl_ = None # attribute declariations, cache
 
   def appendChild(self, child):
     """
@@ -262,6 +267,20 @@ class :x:composable-element(:x:base):
       self._children += child._children
     elif child is not None:
       self._children.append(child)
+    return self
+
+  def prependChild(self, child):
+    """
+    Adds a child to the beginning of this node. If you give an array to this
+    method then it will behave like a DocumentFragment.
+    """
+    if isinstance(child, list):
+      for c in child:
+        self.prependChild(c)
+    elif isinstance(child, :x:frag):
+      self._children = child._children + self._children
+    elif child is not None:
+      self._children.insert(0, child)
     return self
 
   def getChildren(self, tag_name=None):
@@ -284,6 +303,35 @@ class :x:composable-element(:x:base):
     """
     return self._children[0]
 
+  def _getXhpyAttributeDeclaration(self):
+    decl = {}
+
+    # recursively find all base's attr decls
+    bases = [type(self)]
+    checked = set(bases)
+    while True:
+      try:
+        b = bases.pop()
+      except:
+        break
+      # recurse all up bases
+      bases2 = b.__bases__
+      for base in bases2:
+        if base in checked:
+          continue
+        elif base.__name__ == 'xhpy_x__composable_element':
+          # stop at this class
+          continue
+        else:
+          bases.insert(0, base)
+          checked.add(base)
+      # handle this one's attr decls
+      decl2 = super(b, self)._xhpyAttributeDeclaration()
+      decl.update(decl2)
+
+    decl.update(self._xhpyAttributeDeclaration())
+    return decl
+
   def getAttribute(self, attr):
     """
     Fetches an attribute from this elements attribute store. If attr is not
@@ -291,7 +339,10 @@ class :x:composable-element(:x:base):
     """
     if attr in self._attributes:
       return self._attributes[attr]
-    decl = self._xhpyAttributeDeclaration()
+    if self._decl_ == None:
+      self._decl_ = self._getXhpyAttributeDeclaration()
+    decl = self._decl_
+    # print 'decl', self._decl_, attr in decl
     if attr not in decl:
       raise XHPyAttributeNotSupportedException(self, attr)
     elif decl[attr][3]:
@@ -309,6 +360,32 @@ class :x:composable-element(:x:base):
     if ENABLE_VALIDATION:
       val = self._validator.validateAttributeValue(self, attr, val)
     self._attributes[attr] = val
+    return self
+
+  def _saveToOrigAttrs(self, attr, val):
+    """
+    Save this orignal attribute and val into `data-orig-attrs`
+    """
+    attr = attr.strip()
+    currentOrigAttrs = self.getAttribute('data-orig-attrs')
+    tmp = ' ' + currentOrigAttrs + ' '
+    s = '{}={}'.format(attr, val)
+    has = tmp.find(' ' + s + ' ')
+    if has != -1:
+      return self
+    tmp = currentOrigAttrs + ' ' + s
+    self.setAttribute('data-orig-attrs', tmp.strip())
+    return self
+
+  def delAttribute(self, attr):
+    """
+    Delete an attribute in this element's attribute store. But when debug, we
+    keep it in `data-orig-attrs`.
+    """
+    if attr in self._attributes:
+      if is_debug():
+        self._saveToOrigAttrs(attr, self._attributes[attr])
+      del self._attributes[attr]
     return self
 
   def _flushElementChildren(self):
@@ -394,7 +471,9 @@ class :x:frag(:x:primitive):
 
 class :x:comment(:x:primitive):
   """
-  Render an html comment
+  :x:comment is for a line of html comment. Comment is speicial as it will not
+  be declared in any :x:element as child, but it is valid child. So we define
+  this element to help futhur handling.
   """
   def __init__(self, content):
     self.content = content

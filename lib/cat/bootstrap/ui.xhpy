@@ -1,0 +1,218 @@
+from cat.xhpy.pylib import *
+
+# In this file we are going to define common bootstrap components
+# http://getbootstrap.com/components/
+# We are going to align them to html categories, and we also create
+# a new category %bootstrap.
+
+class :bootstrap:container(:div):
+    category %flow, %bootstrap
+
+    attribute
+        bool fluid = False
+
+    children
+        (%bootstrap | pcdata | %flow)*
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:container, self).__init__(attributes, children)
+        if self.getAttribute('fluid'):
+            self.addClass('container-fluid')
+        else:
+            self.addClass('container')
+        self.delAttribute('fluid')
+
+
+class :bootstrap:navbar(:div):
+    category %flow, %bootstrap
+
+    attribute
+        enum {
+            'default',
+            'fixed-top',
+            'fixed-bottom',
+            'static-top'
+        } navbar-type = 'default',
+        bool navbar-inverse = False,
+        enum { 'default', 'none', 'fluid' } with-container = 'default'
+
+    children
+        (:bootstrap:container |
+         :bootstrap:navbar:header |
+         :bootstrap:navbar:body)*
+
+    def __init__(self, attributes={}, children=[]):
+        super(:bootstrap:navbar, self).__init__(attributes, children)
+        withcontainer = self.getAttribute('with-container')
+        if not withcontainer == 'none':
+            if withcontainer == 'default':
+                self._children = [
+                  <bootstrap:container>
+                    {self._children}
+                  </bootstrap:container>
+                ]
+            elif withcontainer == 'fluid':
+                self._children = [
+                  <bootstrap:container fluid={True}>
+                    {self._children}
+                  </bootstrap:container>
+                ]
+            self.delAttribute('with-container')
+        self.addClass('navbar')
+        self.addClass('navbar-default')
+        if not self.getAttribute('navbar-type') == 'default':
+            self.addClass('navbar-' + self.getAttribute('navbar-type'))
+            self.delAttribute('navbar-type')
+        if self.getAttribute('navbar-inverse'):
+            self.addClass('navbar-inverse')
+            self.delAttribute('navbar-inverse')
+
+
+class :bootstrap:navbar:header(:div):
+    category %flow, %bootstrap
+
+    children
+        (pcdata | %flow)*
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:navbar:header, self).__init__(attributes, children)
+        self.addClass('navbar-header')
+
+
+class :bootstrap:navbar:body(:div):
+    category %flow, %bootstrap
+
+    attribute
+        bool collapse = True
+
+    children
+        (:bootstrap:navbar:nav |
+         :bootstrap:navbar:button |
+         :bootstrap:navbar:form |
+         :p)*
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:navbar:body, self).__init__(attributes, children)
+        if self.getAttribute('collapse'):
+            self.addClass('collapse')
+            self.addClass('navbar-collapse')
+            self.delAttribute('collapse')
+
+
+class :bootstrap:navbar:nav(:ul):
+    category %flow, %bootstrap
+
+    attribute
+        bool align-right = False
+
+    children
+        (:bootstrap:navbar:item | :bootstrap:navbar:dropdown)*
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:navbar:nav, self).__init__(attributes, children)
+        self.addClass('nav')
+        self.addClass('navbar-nav')
+        if self.getAttribute('align-right'):
+            self.addClass('navbar-right')
+            self.delAttribute('align-right')
+
+
+class :bootstrap:navbar:item(:li):
+    category %bootstrap
+
+    attribute
+        bool active = False
+
+    children
+        (pcdata | %flow)*
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:navbar:item, self).__init__(attributes, children)
+        if self.getAttribute('active'):
+            self.addClass('active')
+            self.delAttribute('active')
+
+
+class :bootstrap:navbar:separator(:li):
+    category %bootstrap
+
+    children empty
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:navbar:separator, self).__init__(
+            attributes, children
+        )
+        self.addClass('divider')
+
+
+class :bootstrap:navbar:dropdown:menu(:ul):
+    category %flow, %bootstrap
+
+    children
+        (:bootstrap:navbar:item | :bootstrap:navbar:separator | :li)*
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:navbar:dropdown:menu, self).__init__(
+            attributes, children
+        )
+        self.addClass('dropdown-menu')
+
+
+class :bootstrap:navbar:dropdown(:li):
+    category %bootstrap
+
+    attribute
+        string toggle-text = 'More'
+
+    children
+        (:a, :bootstrap:navbar:dropdown:menu*)
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:navbar:dropdown, self).__init__(attributes, children)
+        self._children = [
+            <a href="#" class="dropdown-toggle"
+               data-toggle="dropdown"
+               role="button">
+              {self.getAttribute('toggle-text')}
+              <span class="caret"></span>
+            </a>,
+            <bootstrap:navbar:dropdown:menu>
+              {self._children}
+            </bootstrap:navbar:dropdown:menu>
+        ]
+
+
+class :bootstrap:navbar:button(:button):
+    category %flow, %phrase, %interactive, %bootstrap
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:navbar:button, self).__init__(attributes, children)
+        self.addClass('btn')
+        self.addClass('btn-default')
+        self.addClass('navbar-btn')
+
+
+class :bootstrap:navbar:form(:form):
+    category %flow, %bootstrap
+
+    attribute
+        enum { 'left', 'right' } navbar-align = 'left'
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:navbar:form, self).__init__(attributes, children)
+        self.addClass('navbar-form')
+        self.addClass('navbar-' + self.getAttribute('navbar-align'))
+        self.delAttribute('navbar-align')
+
+
+class :bootstrap:jumbotron(:div):
+    category %flow, %bootstrap
+
+    children
+        (pcdata | %flow)*
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:jumbotron, self).__init__(attributes, children)
+        self.addClass('jumbotron')
+
+
