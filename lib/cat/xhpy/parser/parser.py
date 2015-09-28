@@ -133,6 +133,9 @@ def xhpy_token_normalize():
   if token.id == '(name)' or token.id in keywords:
     yield token.type, token.value
     advance()
+  elif token.id == '*':
+    yield tokenize.STRING, '*'
+    advance()
   else:
     raise XHPySyntaxError('Expected valid XHPy attribute token')
 

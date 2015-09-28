@@ -11,6 +11,7 @@ class BootstrapWebPage(object):
               {self.__get_meta()}
               <title>{self.get_title()}</title>
               {self.__get_bootstrap()}
+              {self.get_head_extra()}
             </head>
             <body>
               <!-- Fixed navbar -->
@@ -22,6 +23,7 @@ class BootstrapWebPage(object):
               </div>
               <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
               <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+              {self.get_body_extra()}
             </body>
           </html>
         )
@@ -61,6 +63,12 @@ class BootstrapWebPage(object):
 
     def get_title(self):
         return 'Navbar Template for Bootstrap'
+
+    def get_head_extra(self):
+        return ''
+
+    def get_body_extra(self):
+        return ''
 
     def get_nav(self):
         return [

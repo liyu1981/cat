@@ -27,10 +27,9 @@ class :xhpy:html-element(:x:primitive):
     # misc
     string selected, string otherButtonLabel, string otherButtonHref,
     string otherButtonClass, string type, string replaceCaret,
-    string replaceChildren, string role,
+    string replaceChildren, string role
 
-    # data
-    string data-toggle, string data-target, string data-orig-attrs
+    # no need to list data-* attributes, we defaultly allow them
 
   def requireUniqueId(self):
     id = self.getAttribute('id')
@@ -57,6 +56,17 @@ class :xhpy:html-element(:x:primitive):
     if has != -1:
       return self
     tmp = currentClasses + ' ' + klass
+    self.setAttribute('class', tmp.strip())
+    return self
+
+  def delClass(self, klass):
+    klass = klass.strip()
+    currentClasses = self.getAttribute('class')
+    tmp = ' ' + currentClasses + ' '
+    has = tmp.find(' ' + klass + ' ')
+    if has == -1:
+      return self
+    tmp = currentClasses.replace(klass + ' ', '')
     self.setAttribute('class', tmp.strip())
     return self
 
@@ -683,11 +693,17 @@ class :samp(:xhpy:html-element):
 
 
 class :script(:xhpy:pseudo-singleton):
-  attribute string charset, bool defer, string src, string type
+  attribute
+    string charset, bool defer, string src, string type,
+    string content = ''
   category %flow, %phrase, %metadata
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)
     self.tagName = 'script'
+    s = self.getAttribute('content')
+    if len(s.strip()) > 0:
+      self._children = [ 'raw!' + s ]
+    self.delAttribute('content')
 
 
 class :select(:xhpy:html-element):
@@ -729,11 +745,14 @@ class :style(:xhpy:pseudo-singleton):
       "screen", "tty", "tv", "projection", "handheld", "print", "braille",
       "aural", "all"
     } media,
-    string type
+    string type, string content = ''
   category %metadata
   def __init__(self, attributes={}, children=[]):
     super(:xhpy:html-element, self).__init__(attributes, children)
     self.tagName = 'style'
+    if self.getAttribute('content'):
+      self._children = [ 'raw!' + self.getAttribute('content') ]
+    self.delAttribute('content')
 
 
 class :sub(:xhpy:html-element):

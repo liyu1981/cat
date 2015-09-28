@@ -1,0 +1,104 @@
+from cat.xhpy.pylib import *
+from cat.bootstrap.ui import *
+
+EXAMPLE_CATEGORY = 'Dropdowns'
+
+def example1():
+    return (
+        'Dropdown',
+        <bootstrap:dropdown class="clearfix">
+          <li><a href="#">Action</a></li>
+          <li><a href="#">Another action</a></li>
+          <li><a href="#">Something else here</a></li>
+          <li><a href="#">Separated link</a></li>
+        </bootstrap:dropdown>,
+"""<bootstrap:dropdown>
+  <li><a href="#">Action</a></li>
+  <li><a href="#">Another action</a></li>
+  <li><a href="#">Something else here</a></li>
+  <li><a href="#">Separated link</a></li>
+</bootstrap:dropdown>"""
+    )
+
+def example2():
+    return (
+        'Dropup',
+        <bootstrap:dropup toggle-text="dropup">
+          <li><a href="#">Action</a></li>
+          <li><a href="#">Another action</a></li>
+          <li><a href="#">Something else here</a></li>
+          <li><a href="#">Separated link</a></li>
+        </bootstrap:dropup>,
+"""<bootstrap:dropup toggle-text="dropup">
+  <li><a href="#">Action</a></li>
+  <li><a href="#">Another action</a></li>
+  <li><a href="#">Something else here</a></li>
+  <li><a href="#">Separated link</a></li>
+</bootstrap:dropup>"""
+    )
+
+def example3():
+    return (
+        'Alignment',
+        None,
+"""<bootstrap:dropup toggle-text="dropup" dropdown-menu-alignment="right">
+...
+</bootstrap:dropup>"""
+    )
+
+def example4():
+    return (
+        'Headers',
+        <bootstrap:dropdown class="clearfix">
+          <bootstrap:dropdown:header>Dropdown header</bootstrap:dropdown:header>
+          <li><a href="#">Action</a></li>
+          <li><a href="#">Another action</a></li>
+          <li><a href="#">Something else here</a></li>
+          <bootstrap:dropdown:header>Dropdown header</bootstrap:dropdown:header>
+          <li><a href="#">Separated link</a></li>
+        </bootstrap:dropdown>,
+"""<bootstrap:dropdown>
+  <bootstrap:dropdown:header>Dropdown header</bootstrap:dropdown:header>
+  <li><a href="#">Action</a></li>
+  <li><a href="#">Another action</a></li>
+  <li><a href="#">Something else here</a></li>
+  <bootstrap:dropdown:header>Dropdown header</bootstrap:dropdown:header>
+  <li><a href="#">Separated link</a></li>
+</bootstrap:dropdown>"""
+    )
+
+def example5():
+    return (
+        'Divider',
+        <bootstrap:dropdown class="clearfix">
+          <li><a href="#">Action</a></li>
+          <li><a href="#">Another action</a></li>
+          <li><a href="#">Something else here</a></li>
+          <bootstrap:dropdown:divider />
+          <li><a href="#">Separated link</a></li>
+        </bootstrap:dropdown>,
+"""<bootstrap:dropdown>
+  <li><a href="#">Action</a></li>
+  <li><a href="#">Another action</a></li>
+  <li><a href="#">Something else here</a></li>
+  <bootstrap:dropdown:divider />
+  <li><a href="#">Separated link</a></li>
+</bootstrap:dropdown>"""
+    )
+
+def example6():
+    return (
+        'Disabled menu items',
+        <bootstrap:dropdown class="clearfix">
+          <li><a href="#">Regular Link</a></li>
+          <li class="disabled"><a href="#">Disabled Link</a></li>
+          <li><a href="#">Another Link</a></li>
+        </bootstrap:dropdown>,
+"""<bootstrap:dropdown>
+  <li><a href="#">Regular Link</a></li>
+  <li class="disabled"><a href="#">Disabled Link</a></li>
+  <li><a href="#">Another Link</a></li>
+</bootstrap:dropdown>"""
+    )
+
+

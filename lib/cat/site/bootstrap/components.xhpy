@@ -6,6 +6,9 @@ from cat.xhpy.pylib import *
 from cat.bootstrap.ui import *
 from cat.bootstrap import BootstrapWebPage
 
+def string2anchorid(s):
+    return s.replace(' ', '').lower()
+
 class IndexHandler(BootstrapWebPage, tornado.web.RequestHandler):
 
     @classmethod
@@ -14,6 +17,38 @@ class IndexHandler(BootstrapWebPage, tornado.web.RequestHandler):
 
     def get_title(self):
         return 'Components - Bootstrap'
+
+    def get_head_extra(self):
+        css = """
+.bs-example>.dropdown>.dropdown-menu {
+    position: absolute !important;
+    display: none !important;
+}
+"""
+        return [
+            <link rel="stylesheet" href="https://www.getbootstrap.com/assets/css/docs.min.css" />,
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/styles/github.min.css" />,
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/highlight.min.js"></script>,
+            <script>hljs.initHighlightingOnLoad();</script>
+        ]
+
+    def get_body_extra(self):
+        js = """$(function() {
+    var h = window.location.hash;
+    if (h !== '') {
+        $($('#sidebar ' + h)[0])
+          .addClass('active')
+          .parent().closest('li').addClass('active');
+    } else {
+        $($('#sidebar ul>li>ul>li:first-child')[0])
+          .addClass('active')
+          .parent().closest('li').addClass('active');
+    }
+});"""
+        return [
+            <script src="https://www.getbootstrap.com/assets/js/docs.min.js"></script>,
+            <script content={js}></script>
+        ]
 
     def get_nav(self):
         return [
@@ -35,6 +70,7 @@ class IndexHandler(BootstrapWebPage, tornado.web.RequestHandler):
         example_name_fmt = 'example{}'
 
         xhpys = []
+        xhpys_navs = []
 
         import importlib
         for root, directories, files in os.walk(componentsdir):
@@ -47,15 +83,60 @@ class IndexHandler(BootstrapWebPage, tornado.web.RequestHandler):
                     )
                     if not 'EXAMPLE_CATEGORY' in mod.__dict__:
                         continue
-                    xhpys.append(<h2>{mod.EXAMPLE_CATEGORY}</h2>)
+                    subs = []
+                    sub_navs = []
+                    subs.append(
+                        <h2 id={string2anchorid(mod.EXAMPLE_CATEGORY)}
+                            class="page-header">
+                          {mod.EXAMPLE_CATEGORY}
+                        </h2>
+                    )
                     i = 1
                     while True:
                         example_name = example_name_fmt.format(i)
                         if not example_name in mod.__dict__:
                             break
-                        title, xhpy = mod.__dict__[example_name]()
-                        xhpys.append(<h3>{title}</h3>)
-                        xhpys.append(xhpy)
+                        title, xhpy, src = mod.__dict__[example_name]()
+                        subs.append(
+                            <h3 id={string2anchorid(title)}>
+                              {title}
+                            </h3>
+                        )
+                        sub_navs.append(
+                            <li id={string2anchorid(title)}>
+                              <a href={"#" + string2anchorid(title)}>
+                                {title}
+                              </a>
+                            </li>
+                        )
+                        if xhpy:
+                            subs.append(<div class="bs-example">{xhpy}</div>)
+                        subs.append(
+                          <div class="highlight">
+                            <pre><code class="html">{src}</code></pre>
+                          </div>
+                        )
                         i = i + 1
+                    xhpys.append(<div class="bs-docs-section">{subs}</div>)
+                    xhpys_navs.append(
+                        <li id={string2anchorid(mod.EXAMPLE_CATEGORY)}>
+                          <a href={"#" + string2anchorid(mod.EXAMPLE_CATEGORY)}>
+                            {mod.EXAMPLE_CATEGORY}
+                          </a>
+                          <ul class="nav">
+                            {sub_navs}
+                          </ul>
+                        </li>
+                    )
 
-        return xhpys
+        return <div class="row">
+          <div class="col-md-10">{xhpys}</div>
+          <div class="col-md-2">
+            <div id="sidebar" class="bs-docs-sidebar affix"
+              style="margin-top: 70px">
+              <ul class="nav bs-docs-sidenav">
+                {xhpys_navs}
+              </ul>
+            </div>
+          </div>
+        </div>

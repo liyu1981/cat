@@ -19,3 +19,4 @@ lib/cat/site/bootstrapcomponents/navbar.py
 lib/cat/site/bootstrapcomponents/index.py
 lib/cat/site/bootstrap/components.py
 lib/cat/site/bootstrap/components/navbar.py
+lib/cat/site/bootstrap/components/dropdown.py

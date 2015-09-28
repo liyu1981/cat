@@ -23,6 +23,79 @@ class :bootstrap:container(:div):
         self.delAttribute('fluid')
 
 
+class :bootstrap:dropdown(:div):
+    category %flow, %bootstrap
+
+    attribute
+        string toggle-text = 'Dropdown',
+        enum { 'left', 'right' } dropdown-menu-alignment = 'left'
+
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:dropdown, self).__init__(attributes, children)
+        self.addClass('dropdown')
+        dma = 'dropdown-menu-' + self.getAttribute('dropdown-menu-alignment')
+        self.delAttribute('dropdown-menu-alignment')
+        self._children = [
+          <button class="btn btn-default dropdown-toggle"
+                  type="button"
+                  data-toggle="dropdown">
+            {self.getAttribute('toggle-text')}
+            <span class="caret"></span>
+          </button>,
+          <bootstrap:dropdown:menu class={dma}>
+            {self._children}
+          </bootstrap:dropdown:menu>
+        ]
+
+
+class :bootstrap:dropup(:div):
+    attribute
+        string toggle-text = 'Dropdown',
+        enum { 'left', 'right' } dropdown-menu-alignment = 'left'
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:dropup, self).__init__(attributes, children)
+        self.addClass('dropup')
+        dma = 'dropdown-menu-' + self.getAttribute('dropdown-menu-alignment')
+        self.delAttribute('dropdown-menu-alignment')
+        self._children = [
+          <button class="btn btn-default dropdown-toggle"
+                  type="button"
+                  data-toggle="dropdown">
+            {self.getAttribute('toggle-text')}
+            <span class="caret"></span>
+          </button>,
+          <bootstrap:dropdown:menu class={dma}>
+            {self._children}
+          </bootstrap:dropdown:menu>
+        ]
+
+
+class :bootstrap:dropdown:menu(:ul):
+    category %flow, %bootstrap
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:dropdown:menu, self).__init__(attributes, children)
+        self.addClass('dropdown-menu')
+
+
+class :bootstrap:dropdown:header(:li):
+    category %bootstrap
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:dropdown:header, self).__init__(attributes, children)
+        self.addClass('dropdown-header')
+
+
+class :bootstrap:dropdown:divider(:li):
+    category %bootstrap
+
+    def __init__(self, attributes={}, children={}):
+        super(:bootstrap:dropdown:divider, self).__init__(attributes, children)
+        self.addClass('divider')
+
+
 class :bootstrap:navbar(:div):
     category %flow, %bootstrap
 
@@ -197,6 +270,9 @@ class :bootstrap:navbar:form(:form):
 
     attribute
         enum { 'left', 'right' } navbar-align = 'left'
+
+    children
+        (%bootstrap | pcdata | %flow)*
 
     def __init__(self, attributes={}, children={}):
         super(:bootstrap:navbar:form, self).__init__(attributes, children)

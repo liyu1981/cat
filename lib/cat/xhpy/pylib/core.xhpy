@@ -6,6 +6,8 @@ import types
 
 ENABLE_VALIDATION = True
 
+DATA_ATTR_PREFIX = 'data-'
+
 class XHPyStrictValidator(object):
   def __init__(self):
     # used to track state during child spec validation
@@ -18,6 +20,10 @@ class XHPyStrictValidator(object):
       raise XHPyInvalidAttributeException(element, decl[attr][1], attr, val)
 
   def validateAttributeValue(self, element, attr, val):
+    # data-* case
+    if attr.startswith(DATA_ATTR_PREFIX):
+      return val if not val is None else ''
+
     if val is None:
       return None
 
@@ -240,6 +246,8 @@ class :x:base(object):
       return unicode(child)
     if isinstance(child, list):
       raise XHPyRenderListException('Can not render list!')
+    if isinstance(child, str) and child.startswith('raw!'):
+      return unicode(child[len('raw!'):])
     return htmlspecialchars(unicode(child))
 
 class :x:composable-element(:x:base):
@@ -342,7 +350,9 @@ class :x:composable-element(:x:base):
     if self._decl_ == None:
       self._decl_ = self._getXhpyAttributeDeclaration()
     decl = self._decl_
-    # print 'decl', self._decl_, attr in decl
+    #print 'decl', self._decl_, attr, attr in decl
+    if attr.startswith(DATA_ATTR_PREFIX):
+      return decl[attr][2] if (attr in decl) else ''
     if attr not in decl:
       raise XHPyAttributeNotSupportedException(self, attr)
     elif decl[attr][3]:
