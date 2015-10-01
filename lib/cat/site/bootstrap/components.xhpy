@@ -9,7 +9,7 @@ from cat.bootstrap import BootstrapWebPage
 def string2anchorid(s):
     return s.replace(' ', '').lower()
 
-class IndexHandler(BootstrapWebPage, tornado.web.RequestHandler):
+class ComponentsHandler(BootstrapWebPage):
 
     @classmethod
     def get_path(cls):
@@ -18,7 +18,7 @@ class IndexHandler(BootstrapWebPage, tornado.web.RequestHandler):
     def get_title(self):
         return 'Components - Bootstrap'
 
-    def get_head_extra(self):
+    def get_head_elements(self):
         css = """
 .bs-example>.dropdown>.dropdown-menu {
     position: absolute !important;
@@ -32,7 +32,7 @@ class IndexHandler(BootstrapWebPage, tornado.web.RequestHandler):
             <script>hljs.initHighlightingOnLoad();</script>
         ]
 
-    def get_body_extra(self):
+    def get_body_end_elements(self):
         js = """$(function() {
     var h = window.location.hash;
     if (h !== '') {
@@ -64,7 +64,7 @@ class IndexHandler(BootstrapWebPage, tornado.web.RequestHandler):
           </bootstrap:navbar:body>
         ]
 
-    def get_layout(self):
+    def get_content(self):
         thisdir = os.path.abspath(os.path.dirname(__file__))
         componentsdir = os.path.abspath(os.path.join(thisdir, 'components'))
         example_name_fmt = 'example{}'

@@ -1,37 +1,29 @@
-import tornado.web
+from cat.webpage import BaseWebPage
 from cat.xhpy.pylib import *
 from .ui import *
 
-class BootstrapWebPage(object):
+class BootstrapWebPage(BaseWebPage):
 
-    def get(self):
-        page = str(
-          <html lang="en">
-            <head>
-              {self.__get_meta()}
-              <title>{self.get_title()}</title>
-              {self.__get_bootstrap()}
-              {self.get_head_extra()}
-            </head>
-            <body>
-              <!-- Fixed navbar -->
-              <bootstrap:navbar navbar-type='fixed-top'>
-                {self.get_nav()}
-              </bootstrap:navbar>
-              <div class="container">
-                {self.get_layout()}
-              </div>
-              <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-              <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-              {self.get_body_extra()}
-            </body>
-          </html>
-        )
+    def __init__(self, application, request, **kwargs):
+      super(BootstrapWebPage, self).__init__(application, request, **kwargs)
 
-        self.write("<!DOCTYPE html>\n" + page)
+      # head elements
+      self.add_head_element(self.__get_meta())
+      self.add_head_element(<title>{self.get_title()}</title>)
+      self.add_head_element(self.__get_bootstrap())
 
-    def get_meta(self):
-        return {}
+      # body elements
+      nav = <bootstrap:navbar navbar-type='fixed-top'></bootstrap:navbar>
+      self.add_body_element(nav)
+      self.nav_container = nav.getContainer()
+      self.main_container = <div class="container"></div>
+      self.add_body_element(self.main_container)
+
+      # body end elements
+      self.add_body_end_element([
+        <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>,
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+      ])
 
     def __get_meta(self):
         meta = self.get_meta()
@@ -61,40 +53,27 @@ class BootstrapWebPage(object):
           <!--[endif]-->
         ]
 
+    def get(self):
+        self.add_head_element(self.get_head_elements())
+        self.nav_container.appendChild(self.get_nav())
+        self.main_container.appendChild(self.get_content())
+        self.add_body_end_element(self.get_body_end_elements())
+        return super(BootstrapWebPage, self).get()
+
+    def get_meta(self):
+        return {}
+
     def get_title(self):
-        return 'Navbar Template for Bootstrap'
+        return 'Template for Bootstrap'
 
-    def get_head_extra(self):
-        return ''
+    def get_head_elements(self):
+        return []
 
-    def get_body_extra(self):
-        return ''
+    def get_body_end_elements(self):
+        return []
 
     def get_nav(self):
-        return [
-          <bootstrap:navbar:header>
-            <a class="navbar-brand" href="#">Project name</a>
-          </bootstrap:navbar:header>,
-          <bootstrap:navbar:body collapse={True}>
-            <bootstrap:navbar:nav>
-              <bootstrap:navbar:item active={True}>
-                <a href="#">Home</a>
-              </bootstrap:navbar:item>
-              <bootstrap:navbar:dropdown>
-                  <bootstrap:navbar:item>
-                    <a href="#">Contact</a>
-                  </bootstrap:navbar:item>
-                  <bootstrap:navbar:separator />
-                  <bootstrap:navbar:item>
-                    <a href="#">About</a>
-                  </bootstrap:navbar:item>
-              </bootstrap:navbar:dropdown>
-            </bootstrap:navbar:nav>
-          </bootstrap:navbar:body>
-        ]
+        return []
 
-    def get_layout(self):
-      return <bootstrap:jumbotron>
-        <h1>Bootstrap example</h1>
-        <p>This is an example page.</p>
-      </bootstrap:jumbotron>
+    def get_content(self):
+        return []

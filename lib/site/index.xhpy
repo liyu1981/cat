@@ -2,7 +2,7 @@ import tornado.web
 from cat.xhpy.pylib import *
 from cat.bootstrap import BootstrapWebPage
 
-class IndexHandler(BootstrapWebPage, tornado.web.RequestHandler):
+class IndexHandler(BootstrapWebPage):
 
     @classmethod
     def get_path(cls):

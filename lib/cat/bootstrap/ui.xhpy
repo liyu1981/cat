@@ -140,6 +140,9 @@ class :bootstrap:navbar(:div):
             self.addClass('navbar-inverse')
             self.delAttribute('navbar-inverse')
 
+    def getContainer(self):
+        return self._children[0]
+
 
 class :bootstrap:navbar:header(:div):
     category %flow, %bootstrap

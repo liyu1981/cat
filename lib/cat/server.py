@@ -61,6 +61,9 @@ class WebServer(object):
 
         # internal first
         for clsobj in cls.load_classes_from_path(cat_site_dir):
+            if not 'get_path' in clsobj.__dict__:
+                # skip class not implement get_path
+                continue
             path = clsobj.get_path()
             routes.append((path, clsobj))
             routes_dict[path] = clsobj
@@ -68,6 +71,9 @@ class WebServer(object):
 
         # external second
         for clsobj in cls.load_classes_from_path(site_dir):
+            if not 'get_path' in clsobj.__dict__:
+                # skip class not implement get_path
+                continue
             path = clsobj.get_path()
             if path in routes_dict:
                 logging.warn('path {} is used by {}, will skip {}.'.format(

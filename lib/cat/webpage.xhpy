@@ -1,0 +1,47 @@
+import tornado.web
+from cat.xhpy.pylib import *
+
+class BaseWebPage(tornado.web.RequestHandler):
+
+    def __init__(self, application, request, **kwargs):
+        super(BaseWebPage, self).__init__(application, request, **kwargs)
+        self.page_elements = {
+            'head': [],
+            'body': [],
+            'body_end': []
+        }
+
+    def __add_page_element(self, section, element):
+        if isinstance(element, list) or isinstance(element, tuple):
+            for e in element:
+                self.__add_page_element(section, e)
+            return
+
+        if not isinstance(element, :x:composable-element) and \
+           not isinstance(element, basestring):
+           return
+
+        self.page_elements[section].append(element)
+
+    def add_head_element(self, element):
+        self.__add_page_element('head', element)
+
+    def add_body_element(self, element):
+        self.__add_page_element('body', element)
+
+    def add_body_end_element(self, element):
+        self.__add_page_element('body_end', element)
+
+    def get(self):
+        page = str(
+          <html lang="en">
+            <head>
+              {self.page_elements['head']}
+            </head>
+            <body>
+              {self.page_elements['body']}
+              {self.page_elements['body_end']}
+            </body>
+          </html>
+        )
+        self.write("<!DOCTYPE html>\n" + page)
